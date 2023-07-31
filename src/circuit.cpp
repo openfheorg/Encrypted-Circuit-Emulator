@@ -70,7 +70,7 @@ Circuit::Circuit(lbcrypto::BINFHE_PARAMSET set,
     std::cout << "*************************" << std::endl;
     std::cout << "WARNING TOY Security used" << std::endl;
     std::cout << "*************************" << std::endl;
-  } else if (set == lbcrypto::STD128_OPT) {
+  } else if (set == lbcrypto::STD128) {
     std::cout << "STD 128 Optimized Security used" << std::endl;
   } else {
     std::cerr << "Error Bad security" << std::endl;

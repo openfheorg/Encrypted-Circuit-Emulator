@@ -137,7 +137,7 @@ void parse_inputs(int argc, char **argv, bool *assemble_flag,
       std::string("-z analyze flag (false)\n") +
       std::string("-c # test cases (not used in all TB programs\n") +
       std::string("-n # test loops [10]\n") +
-      std::string("-s parameter set (TOY|STD128_OPT) [STD128_OPT]\n") +
+      std::string("-s parameter set (TOY|STD128) [STD128]\n") +
       std::string("-m method (AP|GINX) [GINX] \n") +
       std::string("-v verbose flag (false)\n") +
       std::string("\nh prints this message\n");
@@ -164,8 +164,8 @@ void parse_inputs(int argc, char **argv, bool *assemble_flag,
       break;
     case 's':
       set_str = optarg;
-      if (set_str == "STD128_OPT") {
-        *set = lbcrypto::STD128_OPT;
+      if (set_str == "STD128") {
+        *set = lbcrypto::STD128;
         std::cout << "using STD128 OPT" << std::endl;
       } else if (set_str == "TOY") {
         *set = lbcrypto::TOY;

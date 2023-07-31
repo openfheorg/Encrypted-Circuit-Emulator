@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.5.1)
 
 project(encrypted-circuit-emulator CXX)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 find_package(OpenFHE)
@@ -10,8 +10,6 @@ message( STATUS "Using OpenFHE_LIBDIR=${OpenFHE_LIBDIR}" )
 
 
 set( CMAKE_CXX_FLAGS ${OpenFHE_CXX_FLAGS} )
-
-#set( CMAKE_EXE_LINKER_FLAGS ${PALISADE_EXE_LINKER_FLAGS} )
 
 include_directories( ${OPENMP_INCLUDES} )
 include_directories( ${OpenFHE_INCLUDE} )

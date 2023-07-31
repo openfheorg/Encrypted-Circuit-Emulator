@@ -100,7 +100,7 @@ bool test_parity(std::string inFname, unsigned int numTestLoops,
   std::string tline;
 
   // unsigned int max_n_reg;
-  std::vector<unsigned int> n_in_bits(1);
+  std::vector<unsigned int> n_in_bits(2);
   std::vector<unsigned int> n_out_bits(1);
   unsigned int n_p_passed(0);
   unsigned int n_e_passed(0);

@@ -37,6 +37,7 @@
 #define SRC_UTILS_H_
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 
