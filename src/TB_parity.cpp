@@ -64,7 +64,7 @@
 int main(int argc, char **argv) {
   // default parameters
   unsigned int num_test_loops = 10;
-  lbcrypto::BINFHE_PARAMSET set(lbcrypto::STD128_OPT);
+  lbcrypto::BINFHE_PARAMSET set(lbcrypto::STD128);
   lbcrypto::BINFHE_METHOD method(lbcrypto::GINX);
   bool verbose(false);
 
