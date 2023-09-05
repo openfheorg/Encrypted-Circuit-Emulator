@@ -66,7 +66,7 @@ void Gate::Evaluate(const GateEvalParams &gep) {
   OPENFHE_DEBUGEXP(this->encin.size());
   OPENFHE_DEBUGEXP(plaintext_flag);
   OPENFHE_DEBUGEXP(encrypted_flag);
-  if (encrypted_flag) {
+  if (encrypted_flag & dbg_flag) {
     OPENFHE_DEBUGEXP(this->encin[0]);
     lbcrypto::LWEPlaintext res;
     gep.cc.Decrypt(gep.sk, this->encin[0], &res);
@@ -191,15 +191,10 @@ void Gate::Evaluate(const GateEvalParams &gep) {
 
     if (encrypted_flag) {
       encout.resize(1);
-#if 0 // current XOR has a higher failure rate, replace with equivalent gates
+#if 1 // current XOR has a higher failure rate, replace with equivalent gates
 	  auto foo = gep.cc.EvalBinGate(lbcrypto::XOR, this->encin[0], this->encin[1]);
 #else
-      // avoid xor for now
-      auto notin0 = gep.cc.EvalNOT(this->encin[0]);
-      auto notin1 = gep.cc.EvalNOT(this->encin[1]);
-      auto tmp1 = gep.cc.EvalBinGate(lbcrypto::AND, this->encin[0], notin1);
-      auto tmp2 = gep.cc.EvalBinGate(lbcrypto::AND, notin0, this->encin[1]);
-      auto foo = gep.cc.EvalBinGate(lbcrypto::OR, tmp1, tmp2);
+	  auto foo = gep.cc.EvalBinGate(lbcrypto::XOR_FAST, this->encin[0], this->encin[1]);    
 #endif
       encout[0] = foo;
       OPENFHE_DEBUGEXP(encout[0]);

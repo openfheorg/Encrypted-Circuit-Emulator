@@ -70,8 +70,8 @@ Circuit::Circuit(lbcrypto::BINFHE_PARAMSET set,
     std::cout << "*************************" << std::endl;
     std::cout << "WARNING TOY Security used" << std::endl;
     std::cout << "*************************" << std::endl;
-  } else if (set == lbcrypto::STD128) {
-    std::cout << "STD 128 Optimized Security used" << std::endl;
+  } else if (set == lbcrypto::STD128Q_LMKCDEY) {
+    std::cout << "STD128Q_LMKCDEY Security used" << std::endl;
   } else {
     std::cerr << "Error Bad security" << std::endl;
     exit(-1);
@@ -80,6 +80,8 @@ Circuit::Circuit(lbcrypto::BINFHE_PARAMSET set,
     std::cout << "AP used" << std::endl;
   } else if (method == lbcrypto::GINX) {
     std::cout << "GINX used" << std::endl;
+  } else if (method == lbcrypto::LMKCDEY) {
+    std::cout << "LMKCDEY used" << std::endl;
   } else {
     std::cerr << "Error Bad method" << std::endl;
     exit(-1);
@@ -540,7 +542,7 @@ Outputs Circuit::Clock(void) {
     exit(-1);
   }
   while (!this->activeWires.empty() && !this->done) {
-    std::cout << "\r                            " << std::flush;
+  std::cout << "\r                            " << std::flush;
     std::cout << "\r managing... " << std::flush;
     TIC(auto t_management);
     _CircuitManager(); // puts tasks on executingGate
@@ -563,6 +565,10 @@ Outputs Circuit::Clock(void) {
     total_time = 1;
 
   std::cout << std::endl
+            << "### Management time " << management_time << " msec" << std::endl;
+  std::cout << std::endl
+            << "### Execution time " << execution_time << " msec" << std::endl;
+  std::cout << std::endl
             << "### Total time " << total_time << " msec" << std::endl;
   std::cout << std::endl
             << "efficiency "
@@ -574,9 +580,9 @@ Outputs Circuit::Clock(void) {
 
 void Circuit::_CircuitManager(void) {
   OPENFHE_DEBUG_FLAG(false);
-  TIC(auto t_tot);
+  TIC(auto t_mgt_tot);
   unsigned int cleanup_time = 0;
-  unsigned int total_time = 0;
+  unsigned int total_mgt_time = 0;
 
   // the basic flow is:
   // for each active wire pop it of the active queue
@@ -677,16 +683,20 @@ void Circuit::_CircuitManager(void) {
   } // while active wire is not empty
   OPENFHE_DEBUG("Manager Done Cycle");
   // active wire was empty. return so we can cycle again.
-  total_time += TOC_MS(t_tot);
-  // std::cout<<std::endl<<"tot time "<<total_time <<"cleanup time
-  // "<<cleanup_time<<std::endl;
+  total_mgt_time += TOC_MS(t_mgt_tot);
+  std::cout<<"\r                               tot mgt time "<<total_mgt_time <<" ms, cleanup time  "
+		   <<cleanup_time<< " ms       "<<std::flush;
 }
 
 void Circuit::_ExecuteGates(void) {
   OPENFHE_DEBUG_FLAG(false);
+  TIC(auto t_ex_tot);
+  float ex_time = 0.0;
+  float total_ex_time = 0.0;
+  int gates_now = 0;
   // For each gate on the executeGate queue in parallel
   OPENFHE_DEBUG("Execute start Cycle");
-
+  TIC(auto t_ex);
   // all gates on the executingGates queue can be Evaluated in parallel
 #if 0 // requires c++ 9.0 to compile  note could try using  __GNUC__ >8
 #pragma omp parallel for schedule(dynamic)
@@ -709,7 +719,7 @@ void Circuit::_ExecuteGates(void) {
     }
   }
 #endif
-
+  ex_time = TOC_MS(t_ex);
   OPENFHE_DEBUG("done parallel gate");
   while (!this->executingGates.empty()) {
     // pop gate
@@ -731,12 +741,15 @@ void Circuit::_ExecuteGates(void) {
       break;
     case (GateEnum::AND):
       this->n_and_gates++;
+	  gates_now++;
       break;
     case (GateEnum::OR):
       this->n_or_gates++;
+	  gates_now++;
       break;
     case (GateEnum::XOR):
       this->n_xor_gates++;
+	  gates_now++;
       break;
     case (GateEnum::DFF):
       break;
@@ -778,7 +791,7 @@ void Circuit::_ExecuteGates(void) {
         // std::cout<<std::endl;
 
         w.setFanoutGates(it->second);
-
+		
         // remove from wire name from watitingWire list
         auto oit = std::find(this->waitingWireNames.begin(),
                              this->waitingWireNames.end(), outname);
@@ -812,8 +825,21 @@ void Circuit::_ExecuteGates(void) {
     this->doneGates.push_back(g); // done with this gate
   }                               // end while
   OPENFHE_DEBUG("Execute done Cycle");
-  std::cout << "\rProcessing: " << this->doneGates.size() << " of "
-            << this->allGates.size() << std::flush;
+  total_ex_time = TOC_MS(t_ex_tot);
+  std::cout << "Done"<<std::endl;
+  if (total_ex_time == 0) {
+	total_ex_time = 1; //just in case it is zero
+  }
+  int n_proc =omp_get_max_threads(); 
+  std::cout << std::endl << "Processing: " << gates_now << " of "
+            << this->allGates.size() << " "<< ex_time << " ms/ "
+			<< total_ex_time << " ms = "
+			<< ex_time / total_ex_time * 100.0 << " % eff" << std::endl
+			<< "time/gate = "<< ex_time / (float) gates_now << " ms " <<std::endl
+	        << n_proc << " procs "<< (ex_time / (float) gates_now) * (float) n_proc
+			<< " ms/gate (single proc est)"
+			<< std::endl;
+  
 }
 
 void Circuit::setPlaintext(bool input) {

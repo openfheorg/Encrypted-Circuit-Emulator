@@ -137,8 +137,8 @@ void parse_inputs(int argc, char **argv, bool *assemble_flag,
       std::string("-z analyze flag (false)\n") +
       std::string("-c # test cases (not used in all TB programs\n") +
       std::string("-n # test loops [10]\n") +
-      std::string("-s parameter set (TOY|STD128) [STD128]\n") +
-      std::string("-m method (AP|GINX) [GINX] \n") +
+      std::string("-s parameter set (TOY|STD128Q_LMKCDEY) [STD128Q_LMKCDEY]\n") +
+      std::string("-m method (AP|GINX|LMKCDEY) [LMKCDEY] \n") +
       std::string("-v verbose flag (false)\n") +
       std::string("\nh prints this message\n");
 
@@ -164,9 +164,9 @@ void parse_inputs(int argc, char **argv, bool *assemble_flag,
       break;
     case 's':
       set_str = optarg;
-      if (set_str == "STD128") {
-        *set = lbcrypto::STD128;
-        std::cout << "using STD128 OPT" << std::endl;
+      if (set_str == "STD128Q_LMKCDEY") {
+        *set = lbcrypto::STD128Q_LMKCDEY;
+        std::cout << "using STD128Q_LMKCDEY" << std::endl;
       } else if (set_str == "TOY") {
         *set = lbcrypto::TOY;
         std::cout << "using TOY" << std::endl;
@@ -183,6 +183,9 @@ void parse_inputs(int argc, char **argv, bool *assemble_flag,
       } else if (method_str == "AP") {
         *method = lbcrypto::AP;
         std::cout << "using AP" << std::endl;
+	  } else if (method_str == "LMKCDEY") {
+        *method = lbcrypto::LMKCDEY;
+        std::cout << "using LMKCDEY" << std::endl;
       } else {
         std::cerr << "Error Bad Method chosen" << std::endl;
         exit(-1);

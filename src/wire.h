@@ -35,7 +35,6 @@
 
 #ifndef WIRE_H
 #define WIRE_H
-
 #include "binfhecontext.h"
 #include <algorithm>
 #include <deque>

@@ -64,8 +64,8 @@
 int main(int argc, char **argv) {
   // default parameters
   unsigned int num_test_loops = 10;
-  lbcrypto::BINFHE_PARAMSET set(lbcrypto::STD128);
-  lbcrypto::BINFHE_METHOD method(lbcrypto::GINX);
+  lbcrypto::BINFHE_PARAMSET set(lbcrypto::STD128Q_LMKCDEY);
+  lbcrypto::BINFHE_METHOD method(lbcrypto::LMKCDEY);
   bool verbose(false);
 
   // note parse inputs has several parameters we do not use in this simple case.

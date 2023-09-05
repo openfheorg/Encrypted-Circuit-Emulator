@@ -39,7 +39,7 @@
 #include <deque>
 #include <string>
 #include <vector>
-
+#include <omp.h>
 #include "gate.h"
 #include "wire.h"
 
@@ -49,7 +49,7 @@ using GateQueue = std::deque<Gate>;
 
 using Inputs = std::vector<std::vector<unsigned int>>;
 using Outputs = std::vector<std::vector<unsigned int>>;
-using NetList = std::map<std::string, GateNameList>;
+using NetList = std::unordered_map<std::string, GateNameList>;
 
 class Circuit {
 public:

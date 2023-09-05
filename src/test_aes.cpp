@@ -338,7 +338,7 @@ bool test_aes(std::string inFname, unsigned int numTestLoops,
       circ.Reset();
       circ.setPlaintext(false);
       circ.setEncrypted(true);
-      circ.setVerify(true);
+      circ.setVerify(false); //adds time for decryption of partial results
       circ.SetInput(inputs);
       outputs = circ.Clock();
 
